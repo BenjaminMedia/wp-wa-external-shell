@@ -22,25 +22,25 @@
  */
 class White_Album_External_Header_Public {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
+  /**
+   * The ID of this plugin.
+   *
+   * @since    1.0.0
+   * @access   private
+   * @var      string    $plugin_name    The ID of this plugin.
+   */
+  private $plugin_name;
 
   private $options_group_name;
 
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version,
+  /**
+   * The version of this plugin.
+   *
+   * @since    1.0.0
+   * @access   private
+   * @var      string    $version    The current version of this plugin.
+   */
+  private $version,
           $stylesheet,
           $javascript,
           $header,
@@ -49,16 +49,16 @@ class White_Album_External_Header_Public {
           $promobar_top,
           $user_config;
 
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @var      string    $plugin_name       The name of the plugin.
-	 * @var      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version, $options_group_name ) {
-		$this->plugin_name = $plugin_name;
-		$this->version =     $version;
+  /**
+   * Initialize the class and set its properties.
+   *
+   * @since    1.0.0
+   * @var      string    $plugin_name       The name of the plugin.
+   * @var      string    $version    The version of this plugin.
+   */
+  public function __construct( $plugin_name, $version, $options_group_name ) {
+    $this->plugin_name = $plugin_name;
+    $this->version =     $version;
     $this->options_group_name = $options_group_name;
 
     $this->user_config = $this->get_plugin_configuration();
@@ -71,7 +71,7 @@ class White_Album_External_Header_Public {
     $this->footer =       print_r($wa_content->footer, true);
     $this->analytics =    print_r($wa_content->analytics, true);
     $this->promobar_top = print_r($wa_content->promobar_top, true);
-	}
+  }
 
   public function wp_head() {
     echo "
@@ -90,51 +90,51 @@ class White_Album_External_Header_Public {
     }
   }
 
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
+  /**
+   * Register the stylesheets for the public-facing side of the site.
+   *
+   * @since    1.0.0
+   */
+  public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in White_Album_External_Header_Public_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The White_Album_External_Header_Public_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+    /**
+     * This function is provided for demonstration purposes only.
+     *
+     * An instance of this class should be passed to the run() function
+     * defined in White_Album_External_Header_Public_Loader as all of the hooks are defined
+     * in that particular class.
+     *
+     * The White_Album_External_Header_Public_Loader will then create the relationship
+     * between the defined hooks and the functions defined in this
+     * class.
+     */
 
     // wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-public.css', array(), $this->version, 'all' );
     wp_enqueue_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', array(), $this->version, 'all' );
-	}
+  }
 
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
+  /**
+   * Register the stylesheets for the public-facing side of the site.
+   *
+   * @since    1.0.0
+   */
+  public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in White_Album_External_Header_Public_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The White_Album_External_Header_Public_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+    /**
+     * This function is provided for demonstration purposes only.
+     *
+     * An instance of this class should be passed to the run() function
+     * defined in White_Album_External_Header_Public_Loader as all of the hooks are defined
+     * in that particular class.
+     *
+     * The White_Album_External_Header_Public_Loader will then create the relationship
+     * between the defined hooks and the functions defined in this
+     * class.
+     */
 
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/white-album-external-header-public.js', array( 'jquery' ), $this->version, false );
+    // wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/white-album-external-header-public.js', array( 'jquery' ), $this->version, false );
 
-	}
+  }
 
   private function get_white_album_content() {
     $url = $this->get_white_album_api_url();

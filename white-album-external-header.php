@@ -27,7 +27,7 @@
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
-	die;
+  die;
 }
 
 /**
@@ -35,8 +35,8 @@ if ( ! defined( 'WPINC' ) ) {
  * This action is documented in includes/class-white-album-external-header-activator.php
  */
 function activate_white_album_external_header() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-white-album-external-header-activator.php';
-	White_Album_External_Header_Activator::activate();
+  require_once plugin_dir_path( __FILE__ ) . 'includes/class-white-album-external-header-activator.php';
+  White_Album_External_Header_Activator::activate();
 }
 
 /**
@@ -44,8 +44,8 @@ function activate_white_album_external_header() {
  * This action is documented in includes/class-white-album-external-header-deactivator.php
  */
 function deactivate_white_album_external_header() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-white-album-external-header-deactivator.php';
-	White_Album_External_Header_Deactivator::deactivate();
+  require_once plugin_dir_path( __FILE__ ) . 'includes/class-white-album-external-header-deactivator.php';
+  White_Album_External_Header_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_white_album_external_header' );
@@ -68,8 +68,8 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-white-album-external-heade
  */
 function run_white_album_external_header() {
 
-	$plugin = new White_Album_External_Header();
-	$plugin->run();
+  $plugin = new White_Album_External_Header();
+  $plugin->run();
 
 }
 run_white_album_external_header();
