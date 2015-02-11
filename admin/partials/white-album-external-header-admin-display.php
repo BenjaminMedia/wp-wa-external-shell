@@ -13,4 +13,16 @@
  */
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<div class="wrap">
+  <form action='options.php' method='post'>
+
+    <h2>Bonnier co-branding settings</h2>
+
+    <?php
+    settings_fields( $this->plugin_name );
+    do_settings_sections( $this->plugin_name );
+    submit_button();
+    ?>
+
+  </form>
+</div>

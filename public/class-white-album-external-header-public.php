@@ -31,6 +31,8 @@ class White_Album_External_Header_Public {
 	 */
 	private $plugin_name;
 
+  private $options_group_name;
+
 	/**
 	 * The version of this plugin.
 	 *
@@ -38,11 +40,14 @@ class White_Album_External_Header_Public {
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
-	private $version;
-
-  private $stylesheet;
-  private $header;
-  private $footer;
+	private $version,
+          $stylesheet,
+          $javascript,
+          $header,
+          $footer,
+          $analytics,
+          $promobar_top,
+          $user_config;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -51,25 +56,29 @@ class White_Album_External_Header_Public {
 	 * @var      string    $plugin_name       The name of the plugin.
 	 * @var      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
-
+	public function __construct( $plugin_name, $version, $options_group_name ) {
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version =     $version;
+    $this->options_group_name = $options_group_name;
+
+    $this->user_config = $this->get_plugin_configuration();
 
     $wa_content = $this->get_white_album_content();
 
-    $this->stylesheet = print_r($wa_content->head, true);
-    $this->header = print_r($wa_content->header, true);
-    $this->footer = print_r($wa_content->footer, true);
-
+    $this->stylesheet =   print_r($wa_content->stylesheet, true);
+    $this->javascript =   print_r($wa_content->javascript, true);
+    $this->header =       print_r($wa_content->header, true);
+    $this->footer =       print_r($wa_content->footer, true);
+    $this->analytics =    print_r($wa_content->analytics, true);
+    $this->promobar_top = print_r($wa_content->promobar_top, true);
 	}
 
   public function wp_head() {
-    /*
     echo "
-      $this->stylesheet
+      $this->stylesheet\n
+      $this->javascript\n
+      $this->analytics\n
     ";
-    */
 
     if($this->header !== '') ob_start(array(&$this, 'insert_header'));
   }
@@ -77,7 +86,7 @@ class White_Album_External_Header_Public {
   public function wp_footer() {
     if($this->header !== '') {
       ob_end_flush();
-      // echo $this->footer;
+      echo "<div class=\"bonnier-wrapper\">" . $this->footer . "</div>";
     }
   }
 
@@ -100,9 +109,8 @@ class White_Album_External_Header_Public {
 		 * class.
 		 */
 
-		// wp_enqueue_style( $this->plugin_name, $this->stylesheet, array(), $this->version, 'all' );
-    wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-public.css', array(), $this->version, 'all' );
-
+    // wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-public.css', array(), $this->version, 'all' );
+    wp_enqueue_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -129,15 +137,57 @@ class White_Album_External_Header_Public {
 	}
 
   private function get_white_album_content() {
-    $response = wp_remote_retrieve_body( wp_remote_get('http://costume.no/api/v1/shell') );
+    $url = $this->get_white_album_api_url();
+    $response = wp_remote_retrieve_body( wp_remote_get($url) );
 
     if (is_wp_error($response)) return;
 
     return json_decode($response);
   }
 
+  private function get_white_album_api_url() {
+    if (defined('WPBP_ENV') && (WPBP_ENV == 'development')):
+      $host = 'http://127.0.0.1:3000';
+      $site_id = '79';
+
+    else:
+      $domain = $this->user_config['co_branding_domain'];
+      $host = "http://$domain";
+
+    endif;
+
+    $api_url = "$host/api/v1/external_headers/partial";
+    if (isset($site_id)) $api_url .= "?current_site=$site_id";
+
+    return $api_url;
+  }
+
   private function insert_header($buffer) {
-    return preg_replace("/<!-- WAHEADER -->/", "<div class=\"bonnier-header-wrapper\">" . $this->header . "</div>", $buffer);
+    $header = <<< HTML
+      <div class="bonnier-wrapper">
+        $this->promobar_top
+      </div>
+
+      <div class="bonnier-wrapper">
+        $this->header
+      </div>
+HTML;
+
+    return preg_replace("/<body(.*?)>/", "<body$1>" . $header, $buffer);
+  }
+
+  private function write_log ( $log )  {
+    if ( true === WP_DEBUG ) {
+      if ( is_array( $log ) || is_object( $log ) ):
+        error_log( print_r( $log, true ) );
+      else:
+        error_log( $log );
+      endif;
+    }
+  }
+
+  private function get_plugin_configuration() {
+    return get_option( $this->options_group_name );
   }
 
 }

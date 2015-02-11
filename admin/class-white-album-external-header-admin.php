@@ -40,6 +40,8 @@ class White_Album_External_Header_Admin {
 	 */
 	private $version;
 
+  private $options_group_name;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -47,10 +49,11 @@ class White_Album_External_Header_Admin {
 	 * @var      string    $plugin_name       The name of this plugin.
 	 * @var      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $options_group_name ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+    $this->options_group_name = $options_group_name;
 
 	}
 
@@ -73,7 +76,7 @@ class White_Album_External_Header_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-admin.css', array(), $this->version, 'all' );
+		// wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,8 +99,83 @@ class White_Album_External_Header_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/white-album-external-header-admin.js', array( 'jquery' ), $this->version, false );
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/white-album-external-header-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+  public function add_admin_menu() {
+    add_options_page(
+      'Bonnier co-branding',
+      'Bonnier co-branding',
+      'manage_options',
+      $this->plugin_name,
+      [$this, 'options_page']
+    );
+  }
+
+  public function init_admin_settings(  ) {
+    register_setting( $this->plugin_name, $this->options_group_name );
+
+    add_settings_section(
+      ($this->plugin_name . '_section'),
+      __( 'Your section description', $this->plugin_name ),
+      [$this, 'settings_section_callback'],
+      $this->plugin_name
+    );
+
+    add_settings_field(
+      'co_branding_domain',
+      __( 'Co-branding domain <br><small>(domain only, eg. costume.no)</small>', $this->plugin_name ),
+      [$this, 'co_branding_domain_render'],
+      $this->plugin_name,
+      ($this->plugin_name . '_section')
+    );
+
+    add_settings_field(
+      'content_unit_category',
+      __( 'Emediate content unit category <br><small>(sometimes referred to as "<i>shortname</i>")</small>', $this->plugin_name ),
+      [$this, 'content_unit_category_render'],
+      $this->plugin_name,
+      ($this->plugin_name . '_section')
+    );
+
+    add_settings_field(
+      'tns_tracking_path',
+      __( 'TNS path for tracking', $this->plugin_name ),
+      [$this, 'tns_tracking_path_render'],
+      $this->plugin_name,
+      ($this->plugin_name . '_section')
+    );
+  }
+
+
+  public function co_branding_domain_render(  ) {
+    $options = get_option( $this->options_group_name );
+    $option_key = 'co_branding_domain';
+
+    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+  }
+
+  public function content_unit_category_render(  ) {
+    $options = get_option( $this->options_group_name );
+    $option_key = 'content_unit_category';
+
+    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+  }
+
+  public function tns_tracking_path_render(  ) {
+    $options = get_option( $this->options_group_name );
+    $option_key = 'tns_tracking_path';
+
+    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+  }
+
+  public function settings_section_callback(  ) {
+    echo __( 'This section description', $this->plugin_name );
+  }
+
+  public function options_page(  ) {
+    include_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/$this->plugin_name-admin-display.php";
+  }
 
 }

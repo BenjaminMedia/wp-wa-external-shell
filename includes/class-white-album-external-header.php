@@ -57,6 +57,8 @@ class White_Album_External_Header {
 	 */
 	protected $version;
 
+  protected $options_group_name;
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -69,7 +71,8 @@ class White_Album_External_Header {
 	public function __construct() {
 
 		$this->plugin_name = 'white-album-external-header';
-		$this->version = '0.1.0';
+		$this->version = '1.1.0';
+    $this->options_group_name = $this->plugin_name . '_settings';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -150,10 +153,10 @@ class White_Album_External_Header {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new White_Album_External_Header_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new White_Album_External_Header_Admin( $this->get_plugin_name(), $this->get_version(), $this->get_options_group_name() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+    $this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'init_admin_settings' );
 
 	}
 
@@ -166,7 +169,7 @@ class White_Album_External_Header {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new White_Album_External_Header_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new White_Album_External_Header_Public( $this->get_plugin_name(), $this->get_version(), $this->get_options_group_name() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -214,5 +217,9 @@ class White_Album_External_Header {
 	public function get_version() {
 		return $this->version;
 	}
+
+  public function get_options_group_name() {
+    return $this->options_group_name;
+  }
 
 }
