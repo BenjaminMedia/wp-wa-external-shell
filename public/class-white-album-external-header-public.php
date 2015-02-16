@@ -8,16 +8,6 @@
  *
  * @package    White_Album_External_Header
  * @subpackage White_Album_External_Header/public
- */
-
-/**
- * The public-facing functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the dashboard-specific stylesheet and JavaScript.
- *
- * @package    White_Album_External_Header
- * @subpackage White_Album_External_Header/public
  * @author     Casper Klenz-Kitenge, Duke UX <hello@duke.io>
  */
 class White_Album_External_Header_Public {
@@ -31,8 +21,6 @@ class White_Album_External_Header_Public {
    */
   private $plugin_name;
 
-  private $options_group_name;
-
   /**
    * The version of this plugin.
    *
@@ -40,7 +28,18 @@ class White_Album_External_Header_Public {
    * @access   private
    * @var      string    $version    The current version of this plugin.
    */
-  private $version,
+  private $version;
+
+  /**
+   * The key used to save and load required options from the WordPress database.
+   *
+   * @since    1.0.0
+   * @access   private
+   * @var      string    $version    The key used for the array that serializes the options in the database.
+   */
+  private $options_group_name;
+
+  private $white_album_css_namespace,
           $stylesheet,
           $javascript,
           $header,
@@ -53,13 +52,15 @@ class White_Album_External_Header_Public {
    * Initialize the class and set its properties.
    *
    * @since    1.0.0
-   * @var      string    $plugin_name       The name of the plugin.
-   * @var      string    $version    The version of this plugin.
+   * @var      string    $plugin_name           The name of the plugin.
+   * @var      string    $version               The version of this plugin.
+   * @var      string    $options_group_name    The key used to save/load plugin-specifc options from the database.
    */
   public function __construct( $plugin_name, $version, $options_group_name ) {
     $this->plugin_name = $plugin_name;
     $this->version =     $version;
     $this->options_group_name = $options_group_name;
+    $this->white_album_css_namespace = 'bonnier-wrapper';
 
     $this->user_config = $this->get_plugin_configuration();
 
@@ -74,7 +75,16 @@ class White_Album_External_Header_Public {
   }
 
   public function wp_head() {
+    $content_unit_category =  $this->user_config['content_unit_category'];
+    $tns_path =               $this->user_config['tns_tracking_path'];
+
+    if ($tns_path) {
+      $this->analytics = $this->replace_tns_tracking($tns_path);
+    }
+
     echo "
+      <meta name=\"banner-category\" content=\"$content_unit_category\">
+
       $this->stylesheet\n
       $this->javascript\n
       $this->analytics\n
@@ -86,12 +96,17 @@ class White_Album_External_Header_Public {
   public function wp_footer() {
     if($this->header !== '') {
       ob_end_flush();
-      echo "<div class=\"bonnier-wrapper\">" . $this->footer . "</div>";
+
+      echo <<< HTML
+        <div class="$this->white_album_css_namespace">
+          $this->footer
+        </div>
+HTML;
     }
   }
 
   /**
-   * Register the stylesheets for the public-facing side of the site.
+   * Load FontAwesome here, instead of grabbing it from the WhiteAlbum API.
    *
    * @since    1.0.0
    */
@@ -109,32 +124,9 @@ class White_Album_External_Header_Public {
      * class.
      */
 
-    // wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/white-album-external-header-public.css', array(), $this->version, 'all' );
     wp_enqueue_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css', array(), $this->version, 'all' );
   }
 
-  /**
-   * Register the stylesheets for the public-facing side of the site.
-   *
-   * @since    1.0.0
-   */
-  public function enqueue_scripts() {
-
-    /**
-     * This function is provided for demonstration purposes only.
-     *
-     * An instance of this class should be passed to the run() function
-     * defined in White_Album_External_Header_Public_Loader as all of the hooks are defined
-     * in that particular class.
-     *
-     * The White_Album_External_Header_Public_Loader will then create the relationship
-     * between the defined hooks and the functions defined in this
-     * class.
-     */
-
-    // wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/white-album-external-header-public.js', array( 'jquery' ), $this->version, false );
-
-  }
 
   private function get_white_album_content() {
     $url = $this->get_white_album_api_url();
@@ -146,44 +138,34 @@ class White_Album_External_Header_Public {
   }
 
   private function get_white_album_api_url() {
-    if (defined('WPBP_ENV') && (WPBP_ENV == 'development')):
-      $host = 'http://127.0.0.1:3000';
-      $site_id = '79';
-
-    else:
-      $domain = $this->user_config['co_branding_domain'];
-      $host = "http://$domain";
-
-    endif;
+    $domain = $this->user_config['co_branding_domain'];
+    $host = "http://$domain";
 
     $api_url = "$host/api/v1/external_headers/partial";
-    if (isset($site_id)) $api_url .= "?current_site=$site_id";
 
     return $api_url;
   }
 
+  private function replace_tns_tracking($new_path) {
+    return preg_replace(
+      "/<meta.*?name=\"tns-path\"[\s\/]+>/",
+      "<meta content=\"$new_path\" name=\"tns-path\">",
+      $this->analytics
+    );
+  }
+
   private function insert_header($buffer) {
     $header = <<< HTML
-      <div class="bonnier-wrapper">
+      <div class="$this->white_album_css_namespace">
         $this->promobar_top
       </div>
 
-      <div class="bonnier-wrapper">
+      <div class="$this->white_album_css_namespace">
         $this->header
       </div>
 HTML;
 
     return preg_replace("/<body(.*?)>/", "<body$1>" . $header, $buffer);
-  }
-
-  private function write_log ( $log )  {
-    if ( true === WP_DEBUG ) {
-      if ( is_array( $log ) || is_object( $log ) ):
-        error_log( print_r( $log, true ) );
-      else:
-        error_log( $log );
-      endif;
-    }
   }
 
   private function get_plugin_configuration() {

@@ -57,12 +57,28 @@ class White_Album_External_Header {
    */
   protected $version;
 
+  /**
+   * The key used to save and load required options from the WordPress database.
+   * These options are used to configure business-critical details we need from the WhiteAlbum API.
+   *
+   * These are:
+   *   - Domain (eg. costume.no), which determines the brand the blog is co-branding with.
+   *   - Emediate content unit category (or "shortname"), which enables tracking ad impressions correctly.
+   *   - TNS tracking "path"; a string required to differentiate pageviews, for blogs where TNS/Gallup tracking is used.
+   *
+   * The settings are handled in the class White_Album_External_Header_Admin.
+   *
+   * @since    1.1.0
+   * @access   protected
+   * @var      string    $version    The key used for the array that serializes the options in the database.
+   */
   protected $options_group_name;
 
   /**
    * Define the core functionality of the plugin.
    *
-   * Set the plugin name and the plugin version that can be used throughout the plugin.
+   * Set the plugin name, the plugin version and the group name for plugin-specific options,
+   * that can be used throughout the plugin.
    * Load the dependencies, define the locale, and set the hooks for the Dashboard and
    * the public-facing side of the site.
    *
@@ -172,7 +188,6 @@ class White_Album_External_Header {
     $plugin_public = new White_Album_External_Header_Public( $this->get_plugin_name(), $this->get_version(), $this->get_options_group_name() );
 
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-    $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
     $this->loader->add_action( 'wp_head', $plugin_public, 'wp_head' );
     $this->loader->add_action( 'wp_footer', $plugin_public, 'wp_footer' );
 
