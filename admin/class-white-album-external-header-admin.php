@@ -105,8 +105,8 @@ class White_Album_External_Header_Admin {
 
   public function add_admin_menu() {
     add_options_page(
-      'Bonnier co-branding',
-      'Bonnier co-branding',
+      'Bonnier co-branding settings',
+      'Bonnier',
       'manage_options',
       $this->plugin_name,
       [$this, 'options_page']
@@ -148,26 +148,16 @@ class White_Album_External_Header_Admin {
     );
   }
 
-
   public function co_branding_domain_render(  ) {
-    $options = get_option( $this->options_group_name );
-    $option_key = 'co_branding_domain';
-
-    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+    echo $this->build_settings_field('co_branding_domain');
   }
 
   public function content_unit_category_render(  ) {
-    $options = get_option( $this->options_group_name );
-    $option_key = 'content_unit_category';
-
-    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+    echo $this->build_settings_field('content_unit_category');
   }
 
   public function tns_tracking_path_render(  ) {
-    $options = get_option( $this->options_group_name );
-    $option_key = 'tns_tracking_path';
-
-    echo '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $options[$option_key] . '">';
+    echo $this->build_settings_field('tns_tracking_path');
   }
 
   public function settings_section_callback(  ) {
@@ -176,6 +166,13 @@ class White_Album_External_Header_Admin {
 
   public function options_page(  ) {
     include_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/$this->plugin_name-admin-display.php";
+  }
+
+  private function build_settings_field($option_key) {
+    $options = get_option( $this->options_group_name );
+    $value = (isset($options[$option_key]) ? $options[$option_key] : '');
+
+    return '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $value . '">';
   }
 
 }
