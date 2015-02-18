@@ -109,7 +109,7 @@ class White_Album_External_Header_Admin {
       'Bonnier',
       'manage_options',
       $this->plugin_name,
-      [$this, 'options_page']
+      array(&$this, 'options_page')
     );
   }
 
@@ -119,14 +119,14 @@ class White_Album_External_Header_Admin {
     add_settings_section(
       ($this->plugin_name . '_section'),
       __( 'Your section description', $this->plugin_name ),
-      [$this, 'settings_section_callback'],
+      array(&$this, 'settings_section_callback'),
       $this->plugin_name
     );
 
     add_settings_field(
       'co_branding_domain',
       __( 'Co-branding domain <br><small>(domain only, eg. costume.no)</small>', $this->plugin_name ),
-      [$this, 'co_branding_domain_render'],
+      array(&$this, 'co_branding_domain_render'),
       $this->plugin_name,
       ($this->plugin_name . '_section')
     );
@@ -134,7 +134,7 @@ class White_Album_External_Header_Admin {
     add_settings_field(
       'content_unit_category',
       __( 'Emediate content unit category <br><small>(sometimes referred to as "<i>shortname</i>")</small>', $this->plugin_name ),
-      [$this, 'content_unit_category_render'],
+      array(&$this, 'content_unit_category_render'),
       $this->plugin_name,
       ($this->plugin_name . '_section')
     );
@@ -142,7 +142,7 @@ class White_Album_External_Header_Admin {
     add_settings_field(
       'tns_tracking_path',
       __( 'TNS path for tracking', $this->plugin_name ),
-      [$this, 'tns_tracking_path_render'],
+      array(&$this, 'tns_tracking_path_render'),
       $this->plugin_name,
       ($this->plugin_name . '_section')
     );
