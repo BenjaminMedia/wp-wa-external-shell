@@ -16,7 +16,7 @@
  * Plugin Name:       WhiteAlbum External Header
  * Plugin URI:        http://example.com/white-album-external-header-uri/
  * Description:       Co-branding for blogs collaborating commercially with Bonnier Media AS
- * Version:           1.0.0
+ * Version:           1.2.0
  * Author:            Bonnier Interactive & Duke UX
  * Author URI:        http://example.com/
  * License:           GPL-2.0+
