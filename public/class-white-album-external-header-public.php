@@ -54,7 +54,7 @@ class White_Album_External_Header_Public {
    * @since    1.0.0
    * @var      string    $plugin_name           The name of the plugin.
    * @var      string    $version               The version of this plugin.
-   * @var      string    $options_group_name    The key used to save/load plugin-specifc options from the database.
+   * @var      string    $options_group_name    The key used to save/load plugin-specific options from the database.
    */
   public function __construct( $plugin_name, $version, $options_group_name ) {
     $this->plugin_name = $plugin_name;
@@ -140,9 +140,8 @@ HTML;
   private function get_white_album_api_url() {
     $domain = $this->user_config['co_branding_domain'];
     $host = "http://$domain";
-
-    $api_url = "$host/api/v1/external_headers/partial";
-
+    $showBanners = isset($this->user_config['bp_optional_banners']) ? 'false' : 'true';
+    $api_url = "$host/api/v1/external_headers/partial?without_banners=".$showBanners;
     return $api_url;
   }
 

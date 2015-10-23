@@ -146,6 +146,17 @@ class White_Album_External_Header_Admin {
       $this->plugin_name,
       ($this->plugin_name . '_section')
     );
+    add_settings_field(
+        'bp_optional_banners',
+        __( 'Show banners', $this->plugin_name ),
+        array(&$this, 'bp_optional_banners_render'),
+        $this->plugin_name,
+        ($this->plugin_name . '_section')
+    );
+  }
+
+  public function optional_banners_render(  ) {
+    echo $this->build_settings_field('bp_optional_banners_render');
   }
 
   public function co_branding_domain_render(  ) {
@@ -158,6 +169,10 @@ class White_Album_External_Header_Admin {
 
   public function tns_tracking_path_render(  ) {
     echo $this->build_settings_field('tns_tracking_path');
+  }
+
+  public function bp_optional_banners_render(  ) {
+    echo $this->build_settings_checkbox('bp_optional_banners');
   }
 
   public function settings_section_callback(  ) {
@@ -173,6 +188,15 @@ class White_Album_External_Header_Admin {
     $value = (isset($options[$option_key]) ? $options[$option_key] : '');
 
     return '<input type="text" name="' . $this->options_group_name . '['. $option_key .']" value="' . $value . '">';
+  }
+
+  private function build_settings_checkbox($option_key) {
+    $options = get_option( $this->options_group_name );
+    $value = (isset($options[$option_key]) ? $options[$option_key] : '');
+
+    $checked = ($value == 'true') ? 'checked="checked"' : '';
+
+    return '<input type="checkbox" value="true" name="' . $this->options_group_name . '['. $option_key .']" '.$checked.'>';
   }
 
 }
