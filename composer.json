@@ -1,0 +1,11 @@
+{
+  "name": "benjaminmedia/wp-wa-external-shell",
+  "type": "wordpress-plugin",
+  "homepage": "https://github.com/BenjaminMedia/wp-wa-external-shell",
+  "license": "GPLv3",
+  "description": "Pulls in the external shell from whitealbum api",
+  "keywords": ["plugin","whitealbum"],
+  "require": {
+    "composer/installers": "~1.0.6"
+  }
+}
